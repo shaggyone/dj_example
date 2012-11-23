@@ -4,13 +4,17 @@ import datetime
 from unidecode import unidecode
 import re
 
+
 # Create your models here.
 class Post(models.Model):
+    PERMALINK_REGEX = re.compile(r'[^\d\sa-z]+')
+
     title    = models.CharField(max_length = 200)
     body     = models.TextField()
     pub_date = models.DateTimeField('date published')
 
     permalink = models.CharField(max_length = 200)
+
 
     def save(self):
       self.create_permalink()
@@ -21,6 +25,6 @@ class Post(models.Model):
 
     def create_permalink(self):
       if self.permalink == '':
-        self.permalink = re.sub(r'\s+', '-', re.sub(r'[^\da-z]', ' ', unidecode(self.title).lower())).strip('-')
+        self.permalink = PERMALINK_REGEX.sub('-', unidecode(self.title).lower()).strip('-')
 
 
